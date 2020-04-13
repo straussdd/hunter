@@ -2,7 +2,7 @@
 set -euox pipefail
 
 stderr() {
-	cat <<< "$@" 1>&2
+	cat <<< "${0}: ${@}" 1>&2
 }
 
 show_usage() {
@@ -30,15 +30,7 @@ install_libs_on_macos() {
 		gst-plugins-good \
 		gst-plugins-ugly \
 		gstreamer \
-		gst-rtsp-server \
-		--enable-gtk3 \
-		--with-libogg \
-		--with-libvorbis \
-		--with-libvpx \
-		--with-opus \
-		--with-orc \
-		--with-pango \
-		--with-theora
+		gst-rtsp-server
 }
 
 main() {
@@ -70,7 +62,7 @@ main() {
 		i686-unknown-linux-gnu)
 			arch='i386'
 			dist='eoan'
-			libs="i686-linux-gnu"
+			libs="i386-linux-gnu"
 			;;
 		x86_64-unknown-linux-gnu)
 			arch='amd64'
@@ -78,16 +70,16 @@ main() {
 			;;
 		i686-apple-darwin)
 			install_libs_on_macos
-			stderr 'Done: Platform can now be compiled on the native system.'
+			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
 		x86_64-apple-darwin)
 			install_libs_on_macos
-			stderr 'Done: Platform can now be compiled on the native system.'
+			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
 		*)
-			show_usage "Error: Target platform \"${platform}\" is not supported."
+			show_usage "Target platform \"${platform}\" is not supported."
 			;;
 	esac
 
@@ -98,7 +90,7 @@ main() {
 		"https://hub.docker.com/v1/repositories/${user}/${img}/tags/${tag}" \
 		>/dev/null
 	then
-		stderr 'Done: Image already exists on docker hub.'
+		stderr 'Image already exists on docker hub.'
 		exit 0
 	fi
 
@@ -137,7 +129,7 @@ main() {
 	# Try to logout from the docker hub
 	docker logout || true
 
-	stderr "Done: Platform can now be compiled in the prepared docker image."
+	stderr "Platform can now be compiled in the prepared docker image."
 }
 
 main "$@"

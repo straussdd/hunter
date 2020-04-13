@@ -35,6 +35,10 @@ install:
 
 before_script:
   - ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx"]]; then
+      PKG_CONFIG_PATH="/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+    fi
 
 script:
   - cross build --target "${arch}" ${TRAVIS_TAG:+"--release"}
