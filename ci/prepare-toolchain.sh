@@ -19,9 +19,11 @@ show_usage() {
 	exit 1
 }
 
-install_libs_on_macos() {
-	# For MacOS builds, Travis CI provides MacOS worker VMs.
-	# Cross will just invoke Cargo in this case, so 
+# MacOS builds are done directly in the workers provided by Travis CI
+prepare_macos_toolchain() {
+	brew update
+	brew upgrade
+	brew cleanup -s
 	brew install \
 		gst-editing-services \
 		gst-libav \
@@ -30,7 +32,7 @@ install_libs_on_macos() {
 		gst-plugins-good \
 		gst-plugins-ugly \
 		gstreamer \
-		gst-rtsp-server
+		gst-rtsp-server || true
 }
 
 main() {
@@ -69,12 +71,12 @@ main() {
 			libs="x86_64-linux-gnu"
 			;;
 		i686-apple-darwin)
-			install_libs_on_macos
+			prepare_macos_toolchain
 			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
 		x86_64-apple-darwin)
-			install_libs_on_macos
+			prepare_macos_toolchain
 			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
