@@ -19,7 +19,7 @@ pub type AsyncWidgetFn<W> = dyn FnOnce(&Stale, WidgetCore)
                                        -> HResult<W> + Send + Sync;
 
 lazy_static! {
-    static ref SUBPROC: Arc<Mutex<Option<u32>>> = { Arc::new(Mutex::new(None)) };
+    static ref SUBPROC: Arc<Mutex<Option<u32>>> = Arc::new(Mutex::new(None));
 }
 
 fn kill_proc() -> HResult<()> {

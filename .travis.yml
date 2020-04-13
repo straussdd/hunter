@@ -1,7 +1,10 @@
-dist: xenial
+os: linux
+dist: bionic
 language: rust
 rust: nightly
-cache: cargo
+#cache: cargo
+services:
+  - docker
 
 branches:
   only:
@@ -9,48 +12,50 @@ branches:
     - holy
     - master
 
-matrix:
+jobs:
   include:
     # Linux
-    - env: TARGET=armv7-unknown-linux-gnueabihf ARCH=linux-arm-32
-    - env: TARGET=aarch64-unknown-linux-gnu ARCH=linux-arm-64
-    - env: TARGET=i686-unknown-linux-gnu ARCH=linux-intel-32
-    - env: TARGET=x86_64-unknown-linux-gnu ARCH=linux-intel-64
+    - env: name="linux-arm-32" arch="armv7-unknown-linux-gnueabihf"
+    - env: name="linux-arm-64" arch="aarch64-unknown-linux-gnu"
+    - env: name="linux-intel-32" arch="i686-unknown-linux-gnu"
+    - env: name="linux-intel-64" arch="x86_64-unknown-linux-gnu"
 
-    # OSX
-    - env: TARGET=i686-apple-darwin ARCH=macos-intel-32
-      os: osx
-    - env: TARGET=x86_64-apple-darwin ARCH=macos-intel-64
-      os: osx
+    # MacOS
+    - os: osx
+      env: name="macos-intel-32" arch="i686-apple-darwin" 
+    - os: osx
+      env: name="macos-intel-64" arch="x86_64-apple-darwin"
 
-    # *BSD
-    - env: TARGET=i686-unknown-freebsd ARCH=bsd-intel-32
-    - env: TARGET=x86_64-unknown-freebsd ARCH=bsd-intel-64
+    # BSD
+    #- env: name="bsd-intel-32" arch="i686-unknown-freebsd"
+    #- env: name="bsd-intel-64" arch="x86_64-unknown-freebsd"
 
 install:
-  - command -v cross || cargo install cross
+  - cargo install cross
+
+before_script:
+  - ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
 
 script:
-  - PKG_CONFIG_ALLOW_CROSS=1 cross build --target $TARGET ${TRAVIS_TAG:+"--release"}
+  - cross build --target "${arch}" ${TRAVIS_TAG:+"--release"}
 
 before_deploy:
-  - name="hunter-$TRAVIS_BRANCH-$ARCH"
-  - mkdir $name
-  - cp target/$TARGET/release/hunter $name/
-  - cp README.md LICENSE $name/
-  - cp -r extra $name/
-  - GZIP=-9 tar czvf $name.tar.gz $name/*
+  - release="hunter-${TRAVIS_BRANCH}-${name}"
+  - mkdir "${release}"
+  - cp "target/${arch}/release/hunter" "${release}/"
+  - cp README.md LICENSE "${release}/"
+  - cp --recursive extra "${release}/"
+  - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
   provider: releases
-  api_key:
-    secure: 2syUPZ4SoRnqswtvut5mDcBkV06qcCZSWUnXhyrtIMAEKq+bOd0nqChF5/OfDGNIltmTe+qLBgHQxT/48ZU2TAOgYjjNrbjLou5KgPrcXjBI+eKh3s2RCehhhFtfQ9wuusR+emupq4IuPHAGvkONawFljq4RqR/Sr1med8lWZXFCPJd8xYgEOd/MTvJ5HuH3nPMsJJ98KFBbEp65WFH0EZo9j4vv6q8HjfXz/zq/IrsN9ufqo4ccGHFkc9dhXodJG83IkUqWo0ZlxkFFxhLZ5CncJp2qjwTdulWQVwY3mCV/Pz3BUFXfIPITEJvNDMya/SQb4FGJO54DUsOUFuWk/ZAUddtSDkuMNdN16ohBMfqudYYLL/C8NWW9byzVG/f/pz3NAR2qqKl4RPNOFsJjyXSQJ/thEjm82wKkiQ+G38Ii3Gf6jm4FveGDy3CU2Nm/BWOwpW02cQxDqB71Wdo0dScaikM72UO7/XUrSJkgk654oHk9Hv5kEJlgUpFYgabEruNbZn1lC/WAZQDQBNLV9VcTX966Cm6u7azfSTHtFacCGG1wZkJnVJLSr76j24lwBM0z59bHmlTNyLxHxkRx5cjS/shebEE/cAOyeHGXwWbNoyJZFuytwB3613UJ2Zw3qgc2Y5X+GVpjkBbXdbemtDWNWi3xO+Gy0rbCjKLsYco=
-  file: hunter-$TRAVIS_BRANCH-$ARCH.tar.gz
-  skip_cleanup: yes
+  edge: yes
+  token: $GITHUB_OAUTH
+  file: hunter-$TRAVIS_BRANCH-$arch.tar.gz
   draft: yes
   on:
     tags: yes
 
 notifications:
   email:
-  on_success: never
+    no

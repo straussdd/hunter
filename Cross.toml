@@ -1,4 +1,26 @@
-[build.env]
-passthrough = [
-    "PKG_CONFIG_ALLOW_CROSS",
-]
+[target.armv7-unknown-linux-gnueabihf]
+image = "stopbugging/cross-armv7-unknown-linux-gnueabihf"
+
+[target.aarch64-unknown-linux-gnu]
+image = "stopbugging/cross-aarch64-unknown-linux-gnu"
+
+[target.i686-unknown-linux-gnu]
+image = "stopbugging/cross-i686-unknown-linux-gnu"
+
+[target.x86_64-unknown-linux-gnu]
+image = "stopbugging/cross-x86_64-unknown-linux-gnu"
+
+[target.i686-apple-darwin]
+image = "stopbugging/cross-i686-apple-darwin"
+
+[target.x86_64-apple-darwin]
+image = "stopbugging/cross-x86_64-apple-darwin"
+
+[target.i686-unknown-freebsd]
+image = "stopbugging/cross-i686-unknown-freebsd"
+
+[target.x86_64-unknown-freebsd]
+image = "stopbugging/cross-x86_64-unknown-freebsd"
+
+[target.x86_64-unknown-netbsd]
+image = "stopbugging/cross-x86_64-unknown-netbsd"
