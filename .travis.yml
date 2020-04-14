@@ -1,9 +1,8 @@
 os: linux
-osx_image: xcode11.3
 dist: bionic
+osx_image: xcode11.3
 language: rust
 rust: nightly
-cache: cargo
 services:
   - docker
 
@@ -49,11 +48,11 @@ jobs:
 
     # Linux on 64-bit little-endian PowerPC
     - name: linux-powerpc-64le-full
-      env: arch='powerpc64-unknown-linux-gnu' feats='img,sixel,video'
+      env: arch='powerpc64le-unknown-linux-gnu' feats='img,sixel,video'
     - name: linux-powerpc-64le-medi
-      env: arch='powerpc64-unknown-linux-gnu' feats='img,sixel'
+      env: arch='powerpc64le-unknown-linux-gnu' feats='img,sixel'
     - name: linux-powerpc-64le-lite
-      env: arch='powerpc64-unknown-linux-gnu' feats=''
+      env: arch='powerpc64le-unknown-linux-gnu' feats=''
 
     # Linux on 64-bit IBM Z
     - name: linux-s390x-64-full
@@ -100,7 +99,7 @@ deploy:
   provider: releases
   edge: yes
   token: ${GITHUB_OAUTH}
-  file: hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}.tar.gz
+  file: ${release}.tar.gz
   draft: yes
   on:
     tags: yes

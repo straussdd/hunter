@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euox pipefail
+set -euxo pipefail
 
 stderr() {
 	cat <<< "$@" 1>&2

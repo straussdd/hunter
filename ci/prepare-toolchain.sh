@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euox pipefail
+set -euxo pipefail
 
 stderr() {
 	cat <<< "${0}: ${@}" 1>&2
@@ -54,7 +54,7 @@ main() {
 			arch='amd64'
 			libs='x86_64-linux-gnu'
 			;;
-    powerpc64-unknown-linux-gnu)
+    powerpc64le-unknown-linux-gnu)
 			arch='ppc64el'
 			libs='powerpc64le-linux-gnu'
 			;;
