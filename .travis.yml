@@ -86,7 +86,7 @@ before_script:
     fi
 
 script:
-  - cross build --release --target "${arch}" --no-default-features "${feats:+--features ${feats}}"
+  - cross build --release --target "${arch}" --no-default-features ${feats:+--features ${feats}}
 
 before_deploy:
   - release="hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}"
@@ -99,8 +99,8 @@ before_deploy:
 deploy:
   provider: releases
   edge: yes
-  token: $GITHUB_OAUTH
-  file: hunter-$TRAVIS_BRANCH-$arch.tar.gz
+  token: ${GITHUB_OAUTH}
+  file: hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}.tar.gz
   draft: yes
   on:
     tags: yes

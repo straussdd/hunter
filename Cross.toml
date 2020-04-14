@@ -9,3 +9,9 @@ image = "stopbugging/cross-i686-unknown-linux-gnu"
 
 [target.x86_64-unknown-linux-gnu]
 image = "stopbugging/cross-x86_64-unknown-linux-gnu"
+
+[target.powerpc64-unknown-linux-gnu]
+image = "stopbugging/cross-powerpc64-unknown-linux-gnu"
+
+[target.s390x-unknown-linux-gnu]
+image = "stopbugging/cross-s390x-unknown-linux-gnu"
