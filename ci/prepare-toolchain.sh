@@ -21,9 +21,9 @@ show_usage() {
 
 # MacOS builds are done directly in the workers provided by Travis CI
 prepare_macos_toolchain() {
-	brew update
-	brew upgrade
-	brew cleanup -s
+	#brew update
+	#brew upgrade
+	#brew cleanup -s
 	brew install \
 		gst-editing-services \
 		gst-libav \
