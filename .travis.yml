@@ -3,7 +3,7 @@ osx_image: xcode11.3
 dist: bionic
 language: rust
 rust: nightly
-#cache: cargo
+cache: cargo
 services:
   - docker
 
@@ -86,7 +86,7 @@ before_script:
     fi
 
 script:
-  - cross build --target "${arch}" --features "${feats}" ${TRAVIS_TAG:+"--release"}
+  - cross build --release --target "${arch}" --no-default-features "${feats:+--features ${feats}}"
 
 before_deploy:
   - release="hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}"

@@ -120,8 +120,8 @@ main() {
 	EOF
 
 	# Push the built image to docker hub and tag it as the latest build
-	#docker push "${user}/${img}:${tag}"
-	#docker push "${user}/${img}:latest"
+	docker push "${user}/${img}:${tag}"
+	docker push "${user}/${img}:latest"
 
 	# Try to logout from the docker hub
 	docker logout || true
