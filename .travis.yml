@@ -39,7 +39,7 @@ before_script:
     if [[ "${TRAVIS_OS_NAME}" == 'osx' ]]; then
       PKG_CONFIG_PATH="/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
       if [[ "${arch}" == 'i686-apple-darwin' ]]; then
-        RUSTUP_TOOLCHAIN='nightly-2020-01-30'
+        echo "nightly-2019-12-19" >rust-toolchain
       fi
     fi
 
