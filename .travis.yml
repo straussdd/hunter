@@ -98,7 +98,6 @@ before_deploy:
 deploy:
   provider: releases
   edge: yes
-  token: ${GITHUB_OAUTH}
   file: ${release}.tar.gz
   draft: yes
   on:
