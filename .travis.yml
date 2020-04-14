@@ -1,4 +1,5 @@
 os: linux
+osx_image: xcode11.3
 dist: bionic
 language: rust
 rust: nightly
@@ -14,21 +15,64 @@ branches:
 
 jobs:
   include:
-    # Linux
-    - env: name="linux-arm-32" arch="armv7-unknown-linux-gnueabihf"
-    - env: name="linux-arm-64" arch="aarch64-unknown-linux-gnu"
-    - env: name="linux-intel-32" arch="i686-unknown-linux-gnu"
-    - env: name="linux-intel-64" arch="x86_64-unknown-linux-gnu"
+    # Linux on ARMv7/AArch32
+    - name: linux-arm-32-full
+      env: arch='armv7-unknown-linux-gnueabihf' feats='img,sixel,video'
+    - name: linux-arm-32-medi
+      env: arch='armv7-unknown-linux-gnueabihf' feats='img,sixel'
+    - name: linux-arm-32-lite
+      env: arch='armv7-unknown-linux-gnueabihf' feats=''
 
-    # MacOS
-    - os: osx
-      env: name="macos-intel-32" arch="i686-apple-darwin" 
-    - os: osx
-      env: name="macos-intel-64" arch="x86_64-apple-darwin"
+    # Linux on ARM64/AArch64
+    - name: linux-arm-64-full
+      env: arch='aarch64-unknown-linux-gnu' feats='img,sixel,video'
+    - name: linux-arm-64-medi
+      env: arch='aarch64-unknown-linux-gnu' feats='img,sixel'
+    - name: linux-arm-64-lite
+      env: arch='aarch64-unknown-linux-gnu' feats=''
 
-    # BSD
-    #- env: name="bsd-intel-32" arch="i686-unknown-freebsd"
-    #- env: name="bsd-intel-64" arch="x86_64-unknown-freebsd"
+    # Linux on Intel P6/x86
+    - name: linux-intel-32-full
+      env: arch='i686-unknown-linux-gnu' feats='img,sixel,video'
+    - name: linux-intel-32-medi
+      env: arch='i686-unknown-linux-gnu' feats='img,sixel'
+    - name: linux-intel-32-lite
+      env: arch='i686-unknown-linux-gnu' feats=''
+
+    # Linux on Intel x64/AMD64
+    - name: linux-intel-64-full
+      env: arch='x86_64-unknown-linux-gnu' feats='img,sixel,video'
+    - name: linux-intel-64-medi
+      env: arch='x86_64-unknown-linux-gnu' feats='img,sixel'
+    - name: linux-intel-64-lite
+      env: arch='x86_64-unknown-linux-gnu' feats=''
+
+    # Linux on 64-bit little-endian PowerPC
+    - name: linux-powerpc-64le-full
+      env: arch='powerpc64-unknown-linux-gnu' feats='img,sixel,video'
+    - name: linux-powerpc-64le-medi
+      env: arch='powerpc64-unknown-linux-gnu' feats='img,sixel'
+    - name: linux-powerpc-64le-lite
+      env: arch='powerpc64-unknown-linux-gnu' feats=''
+
+    # Linux on 64-bit IBM Z
+    - name: linux-s390x-64-full
+      env: arch='s390x-unknown-linux-gnu' feats='img,sixel,video'
+    - name: linux-s390x-64-medi
+      env: arch='s390x-unknown-linux-gnu' feats='img,sixel'
+    - name: linux-s390x-64-lite
+      env: arch='s390x-unknown-linux-gnu' feats=''
+
+    # MacOS on Intel x64/AMD64
+    - name: macos-intel-64-full
+      env: arch='x86_64-apple-darwin' feats='img,sixel,video'
+      os: osx
+    - name: macos-intel-64-medi
+      env: arch='x86_64-apple-darwin' feats='img,sixel'
+      os: osx
+    - name: macos-intel-64-lite
+      env: arch='x86_64-apple-darwin' feats=''
+      os: osx
 
 install:
   - cargo install cross
@@ -37,17 +81,15 @@ before_script:
   - ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
   - |
     if [[ "${TRAVIS_OS_NAME}" == 'osx' ]]; then
+      echo "${PKG_CONFIG_PATH}"
       PKG_CONFIG_PATH="/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
-      if [[ "${arch}" == 'i686-apple-darwin' ]]; then
-        echo "nightly-2019-12-19" >rust-toolchain
-      fi
     fi
 
 script:
-  - cross build --target "${arch}" ${TRAVIS_TAG:+"--release"}
+  - cross build --target "${arch}" --features "${feats}" ${TRAVIS_TAG:+"--release"}
 
 before_deploy:
-  - release="hunter-${TRAVIS_BRANCH}-${name}"
+  - release="hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}"
   - mkdir "${release}"
   - cp "target/${arch}/release/hunter" "${release}/"
   - cp README.md LICENSE "${release}/"

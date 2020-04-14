@@ -19,22 +19,6 @@ show_usage() {
 	exit 1
 }
 
-# MacOS builds are done directly in the workers provided by Travis CI
-prepare_macos_toolchain() {
-	#brew update
-	#brew upgrade
-	#brew cleanup -s
-	brew install \
-		gst-editing-services \
-		gst-libav \
-		gst-plugins-bad \
-		gst-plugins-base \
-		gst-plugins-good \
-		gst-plugins-ugly \
-		gstreamer \
-		gst-rtsp-server || true
-}
-
 main() {
 	# Check if required parameters are set
 	if [[ -z "${1}" ]]; then
@@ -55,28 +39,39 @@ main() {
 	case "${platform}" in
 		armv7-unknown-linux-gnueabihf)
 			arch='armhf'
-			libs="arm-linux-gnueabihf"
+			libs='arm-linux-gnueabihf'
 			;;
 		aarch64-unknown-linux-gnu)
 			arch='arm64'
-			libs="aarch64-linux-gnu"
+			libs='aarch64-linux-gnu'
 			;;
 		i686-unknown-linux-gnu)
 			arch='i386'
 			dist='eoan'
-			libs="i386-linux-gnu"
+			libs='i386-linux-gnu'
 			;;
 		x86_64-unknown-linux-gnu)
 			arch='amd64'
-			libs="x86_64-linux-gnu"
+			libs='x86_64-linux-gnu'
 			;;
-		i686-apple-darwin)
-			prepare_macos_toolchain
-			stderr 'Platform can now be compiled on the native system.'
-			exit 0
+    powerpc64-unknown-linux-gnu)
+			arch='ppc64el'
+			libs='powerpc64le-linux-gnu'
+			;;
+    s390x-unknown-linux-gnu)
+			arch='s390x'
+			libs='s390x-linux-gnu'
 			;;
 		x86_64-apple-darwin)
-			prepare_macos_toolchain
+			brew install \
+				gst-editing-services \
+				gst-libav \
+				gst-plugins-bad \
+				gst-plugins-base \
+				gst-plugins-good \
+				gst-plugins-ugly \
+				gstreamer \
+				gst-rtsp-server || true
 			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
