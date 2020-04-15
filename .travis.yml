@@ -5,7 +5,11 @@ language: rust
 rust: nightly
 services:
   - docker
-
+cache:
+  directories:
+    - ${TRAVIS_HOME}/.cargo
+    - ${TRAVIS_HOME}/Library/Caches/Homebrew
+  
 branches:
   only:
     - master
@@ -15,7 +19,7 @@ jobs:
     # Linux on ARMv7/AArch32
     - name: linux-arm-32-full
       env: arch='armv7-unknown-linux-gnueabihf' feats='img,sixel,video'
-    - name: linux-arm-32-medi
+    - name: linux-arm-32-imgonly
       env: arch='armv7-unknown-linux-gnueabihf' feats='img,sixel'
     - name: linux-arm-32-lite
       env: arch='armv7-unknown-linux-gnueabihf' feats=''
@@ -23,7 +27,7 @@ jobs:
     # Linux on ARM64/AArch64
     - name: linux-arm-64-full
       env: arch='aarch64-unknown-linux-gnu' feats='img,sixel,video'
-    - name: linux-arm-64-medi
+    - name: linux-arm-64-imgonly
       env: arch='aarch64-unknown-linux-gnu' feats='img,sixel'
     - name: linux-arm-64-lite
       env: arch='aarch64-unknown-linux-gnu' feats=''
@@ -31,7 +35,7 @@ jobs:
     # Linux on Intel P6/x86
     - name: linux-intel-32-full
       env: arch='i686-unknown-linux-gnu' feats='img,sixel,video'
-    - name: linux-intel-32-medi
+    - name: linux-intel-32-imgonly
       env: arch='i686-unknown-linux-gnu' feats='img,sixel'
     - name: linux-intel-32-lite
       env: arch='i686-unknown-linux-gnu' feats=''
@@ -39,7 +43,7 @@ jobs:
     # Linux on Intel x64/AMD64
     - name: linux-intel-64-full
       env: arch='x86_64-unknown-linux-gnu' feats='img,sixel,video'
-    - name: linux-intel-64-medi
+    - name: linux-intel-64-imgonly
       env: arch='x86_64-unknown-linux-gnu' feats='img,sixel'
     - name: linux-intel-64-lite
       env: arch='x86_64-unknown-linux-gnu' feats=''
@@ -47,7 +51,7 @@ jobs:
     # Linux on 64-bit little-endian PowerPC
     - name: linux-powerpc-64le-full
       env: arch='powerpc64le-unknown-linux-gnu' feats='img,sixel,video'
-    - name: linux-powerpc-64le-medi
+    - name: linux-powerpc-64le-imgonly
       env: arch='powerpc64le-unknown-linux-gnu' feats='img,sixel'
     - name: linux-powerpc-64le-lite
       env: arch='powerpc64le-unknown-linux-gnu' feats=''
@@ -55,7 +59,7 @@ jobs:
     # Linux on 64-bit IBM Z
     - name: linux-s390x-64-full
       env: arch='s390x-unknown-linux-gnu' feats='img,sixel,video'
-    - name: linux-s390x-64-medi
+    - name: linux-s390x-64-imgonly
       env: arch='s390x-unknown-linux-gnu' feats='img,sixel'
     - name: linux-s390x-64-lite
       env: arch='s390x-unknown-linux-gnu' feats=''
@@ -64,7 +68,7 @@ jobs:
     - name: macos-intel-64-full
       env: arch='x86_64-apple-darwin' feats='img,sixel,video'
       os: osx
-    - name: macos-intel-64-medi
+    - name: macos-intel-64-imgonly
       env: arch='x86_64-apple-darwin' feats='img,sixel'
       os: osx
     - name: macos-intel-64-lite
