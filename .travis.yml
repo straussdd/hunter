@@ -100,7 +100,10 @@ before_deploy:
   - |
     if [[ -z "${TRAVIS_TAG}" ]]; then
       TRAVIS_TAG='preview'
-      GITHUB_PRERELEASE='true'
+      export GITHUB_PRERELEASE='true'
+      git config --local user.name 'Travis CI'
+      git config --local user.email 'none@travis-ci.com'
+      git tag --force "${TRAVIS_TAG}"
     fi
     release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
     mkdir "${release}"
