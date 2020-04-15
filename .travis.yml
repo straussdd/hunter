@@ -115,7 +115,9 @@ deploy:
   file: ${release}.tar.gz
   overwrite: yes
   on:
-    branch: master
+    branch:
+      - master
+      - /^v\d+\.\d+\.\d+.*$/
 
 notifications:
   email:
