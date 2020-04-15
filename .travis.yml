@@ -89,7 +89,7 @@ script:
   - cross build --release --target "${arch}" --no-default-features ${feats:+--features ${feats}}
 
 before_deploy:
-  - TRAVIS_TAG="${TRAVIS_TAG:-preview-${TRAVIS_COMMIT::8}}"
+  - if [[ -n "${feats}" ]]; then TRAVIS_TAG="preview-${TRAVIS_COMMIT::8}"; fi
   - release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
   - mkdir "${release}"
   - cp "target/${arch}/release/hunter" "${release}/"
