@@ -90,7 +90,7 @@ before_deploy:
   - mkdir "${release}"
   - cp "target/${arch}/release/hunter" "${release}/"
   - cp README.md LICENSE config.tar.gz "${release}/"
-  - if [[ -n "${feats}" ]]; then cp "target/${arch}/release/hunter-media" "${release}/"'; fi
+  - if [[ -n "${feats}" ]]; then cp "target/${arch}/release/hunter-media" "${release}/"; fi
   - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
