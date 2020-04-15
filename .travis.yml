@@ -3,22 +3,22 @@ dist: bionic
 osx_image: xcode11.3
 language: rust
 rust: nightly
+addons:
+  homebrew:
+    packages:
+    - gst-editing-services
+    - gst-libav
+    - gst-plugins-bad
+    - gst-plugins-base
+    - gst-plugins-good
+    - gst-plugins-ugly
+    - gstreamer
+    - gst-rtsp-server
 services:
   - docker
 cache:
   directories:
     - ${TRAVIS_HOME}/.cargo
-
-homebrew:
-  packages:
-  - gst-editing-services
-  - gst-libav
-  - gst-plugins-bad
-  - gst-plugins-base
-  - gst-plugins-good
-  - gst-plugins-ugly
-  - gstreamer
-  - gst-rtsp-server
 
 jobs:
   include:
