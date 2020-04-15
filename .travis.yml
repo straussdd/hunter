@@ -8,8 +8,6 @@ services:
 
 branches:
   only:
-    - /^v\d+\.\d+\.\d+.*$/
-    - holy
     - master
 
 jobs:
@@ -80,28 +78,25 @@ before_script:
   - ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
   - |
     if [[ "${TRAVIS_OS_NAME}" == 'osx' ]]; then
-      echo "${PKG_CONFIG_PATH}"
-      PKG_CONFIG_PATH="/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+      PKG_CONFIG_PATH='/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig'
     fi
 
 script:
   - cross build --release --target "${arch}" --no-default-features ${feats:+--features ${feats}}
 
 before_deploy:
-  - release="hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}"
+  - TRAVIS_TAG="${TRAVIS_TAG:-preview-${TRAVIS_COMMIT::8}}"
+  - release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
   - mkdir "${release}"
   - cp "target/${arch}/release/hunter" "${release}/"
   - cp README.md LICENSE config.tar.gz "${release}/"
-  - '[[ -n "${feats}" ]] && cp "target/${arch}/release/hunter-media" "${release}/"'
+  - if [[ -n "${feats}" ]]; then cp "target/${arch}/release/hunter-media" "${release}/"'; fi
   - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
   provider: releases
   edge: yes
   file: ${release}.tar.gz
-  draft: yes
-  on:
-    tags: yes
 
 notifications:
   email:
