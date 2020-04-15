@@ -101,10 +101,19 @@ before_deploy:
     if [[ -z "${TRAVIS_TAG}" ]]; then
       TRAVIS_TAG='preview'
       export GITHUB_PRERELEASE='true'
-      git config --local user.name 'Travis CI'
-      git config --local user.email 'builds@travis-ci.com'
-      git tag --force "${TRAVIS_TAG}"
-      git push --follow-tags origin "${TRAVIS_TAG}"
+      local masterRef="$(git rev-list --max-count=1 master)"
+      local travisRef="$(git rev-list --max-count=1 \"${TRAVIS_TAG}\")"
+      if [[ "${masterRef}" != "${travisRef}" ]]; then
+        local loginData="${TRAVIS_REPO_SLUG%%/*}:${GITHUB_TOKEN}"
+        local originUrl="https://${loginData}@github.com/${TRAVIS_REPO_SLUG}.git"
+        git remote set-url origin "${originUrl}"
+        git config --local user.name 'Travis CI'
+        git config --local user.email 'builds@travis-ci.com'
+        git tag --delete "${TRAVIS_TAG}"
+        git push origin ":refs/tags/${TRAVIS_TAG}"
+        git tag --annotate --force "${TRAVIS_TAG}"
+        git push --tags origin master
+      fi
     fi
     release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
     mkdir "${release}"
