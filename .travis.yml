@@ -100,19 +100,21 @@ before_deploy:
   - |
     if [[ -z "${TRAVIS_TAG}" ]]; then
       TRAVIS_TAG='preview'
-      export GITHUB_PRERELEASE='true'
-      local masterRef="$(git rev-list --max-count=1 master)"
-      local travisRef="$(git rev-list --max-count=1 \"${TRAVIS_TAG}\")"
-      if [[ "${masterRef}" != "${travisRef}" ]]; then
-        local loginData="${TRAVIS_REPO_SLUG%%/*}:${GITHUB_TOKEN}"
-        local originUrl="https://${loginData}@github.com/${TRAVIS_REPO_SLUG}.git"
-        git remote set-url origin "${originUrl}"
-        git config --local user.name 'Travis CI'
-        git config --local user.email 'builds@travis-ci.com'
-        git tag --delete "${TRAVIS_TAG}"
-        git push origin ":refs/tags/${TRAVIS_TAG}"
-        git tag --annotate --force "${TRAVIS_TAG}"
-        git push --tags origin master
+      export GITHUB_PRERELEASE=1
+      if git rev-parse preview >/dev/null 2>&1; then
+        local masterRef="$(git rev-list --max-count=1 master)"
+        local travisRef="$(git rev-list --max-count=1 preview)"
+        if [[ "${masterRef}" != "${travisRef}" ]]; then
+          local loginData="${TRAVIS_REPO_SLUG%%/*}:${GITHUB_TOKEN}"
+          local originUrl="https://${loginData}@github.com/${TRAVIS_REPO_SLUG}.git"
+          git remote set-url origin "${originUrl}"
+          git config --local user.name 'Travis CI'
+          git config --local user.email 'builds@travis-ci.com'
+          git tag --delete "${TRAVIS_TAG}"
+          git push origin ":refs/tags/${TRAVIS_TAG}"
+          git tag --annotate --force "${TRAVIS_TAG}"
+          git push --tags origin master
+        fi
       fi
     fi
     release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
