@@ -97,8 +97,8 @@ script:
 before_deploy:
   - |
     if [[ -z "${TRAVIS_TAG}" ]]; then
-      TRAVIS_TAG="preview-${TRAVIS_COMMIT::8}"
-      GITHUB_PRERELEASE=true
+      TRAVIS_TAG='preview'
+      GITHUB_PRERELEASE='true'
     fi
     release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
     mkdir "${release}"
@@ -115,9 +115,8 @@ deploy:
   file: ${release}.tar.gz
   overwrite: yes
   on:
-    branch:
-      - master
-      - /^v\d+\.\d+\.\d+.*$/
+    all_branches: yes
+    condition: "${TRAVIS_BRANCH}" =~ ^(master|v[0-9]+\.[0-9]+\.[0-9]+.*)$
 
 notifications:
   email:
