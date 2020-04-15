@@ -116,7 +116,8 @@ deploy:
   overwrite: yes
   on:
     all_branches: yes
-    condition: "${TRAVIS_BRANCH}" =~ ^(master|v[0-9]+\.[0-9]+\.[0-9]+.*)$
+    condition: >
+      "${TRAVIS_BRANCH}" =~ ^(master|v[0-9]+\.[0-9]+\.[0-9]+.*)$
 
 notifications:
   email:
