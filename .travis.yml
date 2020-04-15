@@ -104,7 +104,7 @@ before_deploy:
       git config --local user.name 'Travis CI'
       git config --local user.email 'builds@travis-ci.com'
       git tag --force "${TRAVIS_TAG}"
-      git push origin "${TRAVIS_TAG}"
+      git push --follow-tags origin "${TRAVIS_TAG}"
     fi
     release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
     mkdir "${release}"
