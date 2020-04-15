@@ -90,11 +90,10 @@ script:
 
 before_deploy:
   - TRAVIS_TAG="${TRAVIS_TAG:-preview-${TRAVIS_COMMIT::8}}"
-  - release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
+  - release="hunter_[${TRAVIS_TAG}][${TRAVIS_JOB_NAME}]${feats:+[${feats//,/+}]}"
   - mkdir "${release}"
-  - cp "target/${arch}/release/hunter" "${release}/"
+  - cp "target/${arch}/release/hunter" "${feats:+target/${arch}/release/hunter-media}" "${release}/"
   - cp README.md LICENSE config.tar.gz "${release}/"
-  - if [[ -n "${feats}" ]]; then cp "target/${arch}/release/hunter-media" "${release}/"; fi
   - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
