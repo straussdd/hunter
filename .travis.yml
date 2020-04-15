@@ -129,6 +129,9 @@ before_deploy:
 deploy:
   provider: releases
   edge: yes
+  name: Automated builds for commit ${TRAVIS_COMMIT::8}
+  release_notes: |
+    hunter-preview-<os>-<cpu>-<bitness>-<features>.tar.gz
   file: ${release}.tar.gz
   overwrite: yes
   on:
