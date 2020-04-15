@@ -20,6 +20,8 @@ cache:
   directories:
     - ${TRAVIS_HOME}/.cargo
 
+if:
+  branch != preview
 jobs:
   include:
     # Linux on ARMv7/AArch32
