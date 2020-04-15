@@ -8,11 +8,17 @@ services:
 cache:
   directories:
     - ${TRAVIS_HOME}/.cargo
-    - ${TRAVIS_HOME}/Library/Caches/Homebrew
-  
-branches:
-  only:
-    - master
+
+homebrew:
+  packages:
+  - gst-editing-services
+  - gst-libav
+  - gst-plugins-bad
+  - gst-plugins-base
+  - gst-plugins-good
+  - gst-plugins-ugly
+  - gstreamer
+  - gst-rtsp-server
 
 jobs:
   include:
@@ -79,8 +85,8 @@ install:
   - cargo install cross
 
 before_script:
-  - ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
   - |
+    ci/prepare-toolchain.sh "${DOCKER_USERNAME}" "${DOCKER_PASSWORD}" "${arch}"
     if [[ "${TRAVIS_OS_NAME}" == 'osx' ]]; then
       PKG_CONFIG_PATH='/Library/Frameworks/GStreamer.framework/Versions/Current/lib/pkgconfig'
     fi
@@ -89,18 +95,27 @@ script:
   - cross build --release --target "${arch}" --no-default-features ${feats:+--features ${feats}}
 
 before_deploy:
-  - if [[ -n "${feats}" ]]; then TRAVIS_TAG="preview-${TRAVIS_COMMIT::8}"; fi
-  - release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
-  - mkdir "${release}"
-  - cp "target/${arch}/release/hunter" "${release}/"
-  - cp README.md LICENSE config.tar.gz "${release}/"
-  - if [[ -n "${feats}" ]]; then cp "target/${arch}/release/hunter-media" "${release}/"; fi
-  - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
+  - |
+    if [[ -z "${TRAVIS_TAG}" ]]; then
+      TRAVIS_TAG="preview-${TRAVIS_COMMIT::8}"
+      GITHUB_PRERELEASE=true
+    fi
+    release="hunter-${TRAVIS_TAG}-${TRAVIS_JOB_NAME}"
+    mkdir "${release}"
+    cp "target/${arch}/release/hunter" "${release}/"
+    cp README.md LICENSE config.tar.gz "${release}/"
+    if [[ -n "${feats}" ]]; then
+      cp "target/${arch}/release/hunter-media" "${release}/"
+    fi
+    GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
   provider: releases
   edge: yes
   file: ${release}.tar.gz
+  overwrite: yes
+  on:
+    branch: master
 
 notifications:
   email:

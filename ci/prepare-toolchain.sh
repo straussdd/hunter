@@ -63,15 +63,15 @@ main() {
 			libs='s390x-linux-gnu'
 			;;
 		x86_64-apple-darwin)
-			brew install \
-				gst-editing-services \
-				gst-libav \
-				gst-plugins-bad \
-				gst-plugins-base \
-				gst-plugins-good \
-				gst-plugins-ugly \
-				gstreamer \
-				gst-rtsp-server || true
+			#brew install \
+			#	gst-editing-services \
+			#	gst-libav \
+			#	gst-plugins-bad \
+			#	gst-plugins-base \
+			#	gst-plugins-good \
+			#	gst-plugins-ugly \
+			#	gstreamer \
+			#	gst-rtsp-server || true
 			stderr 'Platform can now be compiled on the native system.'
 			exit 0
 			;;
