@@ -91,8 +91,8 @@ before_deploy:
   - release="hunter-${TRAVIS_BRANCH}-${TRAVIS_JOB_NAME}"
   - mkdir "${release}"
   - cp "target/${arch}/release/hunter" "${release}/"
-  - cp README.md LICENSE "${release}/"
-  - cp --recursive extra "${release}/"
+  - cp README.md LICENSE config.tar.gz "${release}/"
+  - [[ -n "${feats}" ]] && cp "target/${arch}/release/hunter-media" "${release}/"
   - GZIP=-9 tar --create --gzip --verbose --file="${release}.tar.gz" "${release}"/*
 
 deploy:
