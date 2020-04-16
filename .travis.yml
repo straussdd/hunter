@@ -111,7 +111,7 @@ before_deploy:
           git config --local user.name 'Travis CI'
           git config --local user.email 'builds@travis-ci.com'
           git tag --delete "${TRAVIS_TAG}"
-          git push origin ":refs/tags/${TRAVIS_TAG}"
+          git push origin ":refs/tags/${TRAVIS_TAG}" || true
           git tag --annotate --force "${TRAVIS_TAG}"
           git push --tags origin master
         fi
